@@ -147,8 +147,8 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
     cache = CacheBuilder.newBuilder().maximumSize(cacheSize).expireAfterWrite(cacheExpiration, TimeUnit.MINUTES)
         .build(new CacheLoader<String, Object>() {
           @Override
-          public Object load(String id) throws Exception {
-            User user = loadUserFromMoodle(id);
+          public Object load(String username) throws Exception {
+            User user = loadUserFromMoodle(username);
             return user == null ? nullToken : user;
           }
         });
@@ -291,10 +291,12 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
       userPattern = null;
     }
 
-    List<User> users = new LinkedList<User>();
-    JaxbOrganization jaxbOrganization = JaxbOrganization.fromOrganization(organization);
-    JaxbUser queryUser = new JaxbUser(query, PROVIDER_NAME, jaxbOrganization, new HashSet<JaxbRole>());
-    users.add(queryUser);
+    // Load User
+    List<User> users = new LinkedList<>();
+
+    User user = loadUser(query);
+    if (user != null)
+      users.add(user);
 
     return users.iterator();
   }
@@ -332,7 +334,7 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
    */
   @Override
   public List<Role> getRolesForUser(String username) {
-    List<Role> roles = new LinkedList<Role>();
+    List<Role> roles = new LinkedList<>();
 
     // Don't answer for admin, anonymous or empty user
     if ("admin".equals(username) || "".equals(username) || "anonymous".equals(username)) {
@@ -343,12 +345,12 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
     User user = loadUser(username);
     if (user != null) {
       logger.debug("Returning cached roleset for {}", username);
-      return new ArrayList<Role>(user.getRoles());
+      return new ArrayList<>(user.getRoles());
     }
 
     // Not found
     logger.debug("Return empty roleset for {} - not found in Moodle", username);
-    return new LinkedList<Role>();
+    return new LinkedList<>();
   }
 
   /**
@@ -403,7 +405,7 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
     }
 
     // Roles list
-    List<Role> roles = new LinkedList<Role>();
+    List<Role> roles = new LinkedList<>();
     JaxbOrganization jaxbOrganization = JaxbOrganization.fromOrganization(organization);
     if (ltirole) {
       // Query is for a Course ID and an LTI role (Instructor/Learner)
@@ -451,13 +453,13 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
       if (obj == null)
         return roles;
 
-      if (!(obj instanceof JSONArray) || !(((JSONArray) obj).get(0) instanceof JSONObject))
+      if (!(obj instanceof JSONArray))
         throw new Exception("Moodle responded in unexpected format");
 
       JSONArray courses = (JSONArray) obj;
       for (Object courseObj : courses) {
         JSONObject course = (JSONObject) courseObj;
-        String courseId = (String) course.get("id");
+        String courseId = Long.toString((Long) course.get("id"));
 
         // Role for Learners
         roles.add(new JaxbRole(
@@ -491,7 +493,6 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
 
     // Don't answer for admin, anonymous or empty user
     if ("admin".equals(username) || "".equals(username) || "anonymous".equals(username)) {
-      cache.put(username, nullToken);
       logger.debug("We don't answer for: " + username);
       return null;
     }
@@ -514,15 +515,18 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
       if (obj == null) {
         // user not known to this provider
         logger.debug("User {} not found in Moodle system", username);
-        cache.put(username, nullToken);
         return null;
       }
 
-      if (!(obj instanceof JSONArray) || !(((JSONArray) obj).get(0) instanceof JSONObject))
+      if (!(obj instanceof JSONArray))
         throw new Exception("Moodle responded in unexpected format");
 
+      if (((JSONArray) obj).size() == 0)
+        return null;
+
       JSONObject userObj = (JSONObject) ((JSONArray) obj).get(0);
-      Set<JaxbRole> roles = loadUserRolesFromMoodle((String) userObj.get("id"));
+      String userId = Long.toString((Long) userObj.get("id"));
+      Set<JaxbRole> roles = loadUserRolesFromMoodle(userId);
 
       User user = new JaxbUser(
           username,
@@ -535,7 +539,6 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
           roles
       );
 
-      cache.put(username, user);
       return user;
     } catch (Exception e) {
       logger.warn("Exception loading Moodle user {} at {}: {}", username, moodleUrl, e.getMessage());
@@ -560,7 +563,7 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
     url.addParameters(params);
     url.addParameter("wstoken", moodleToken);
     url.addParameter("wsfunction", function);
-    url.addParameter("moodlewsrestformat", function);
+    url.addParameter("moodlewsrestformat", "json");
 
     // Execute request
     HttpGet get = new HttpGet(url.build());
