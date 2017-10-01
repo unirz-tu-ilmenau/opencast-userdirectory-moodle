@@ -14,8 +14,8 @@ org.opencastproject.userdirectory.moodle.token=mytoken1234abcdef
 #org.opencastproject.userdirectory.moodle.cache.expiration=60
 
 # Optional regexp for matching Moodle course and user IDs.
-#org.opencastproject.userdirectory.moodle.course.pattern=^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
-#org.opencastproject.userdirectory.moodle.user.pattern=^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+#org.opencastproject.userdirectory.moodle.course.pattern=^[0-9]+$
+#org.opencastproject.userdirectory.moodle.user.pattern=^[0-9a-zA-Z_]+$
 
 # Optional comma-separated list of Moodle roles which are mapped to Instructor role suffix in Opencast
 #org.opencastproject.userdirectory.moodle.instructor.roles=Instructor,Site owner,maintain
