@@ -45,18 +45,22 @@ release-master:
   only:
     - master
   script:
+    - mkdir deploy
     - cd deploy
-    - ele-release-push master opencast-userdirectory-moodle/target/opencast-userdirectory-moodle-*.jar
+    - cp opencast-userdirectory-moodle/target/opencast-userdirectory-moodle-*.jar .
+    - ele-release-push master opencast-userdirectory-moodle-*.jar
 
 release-release:
   stage: release
   only:
     - tags
   script:
+    - mkdir deploy
     - cd deploy
-    - ele-release-push latest opencast-userdirectory-moodle/target/opencast-userdirectory-moodle-*.jar
-    - ele-release-push "${ELE_VERSION}" opencast-userdirectory-moodle/target/opencast-userdirectory-moodle-*.jar
-    - ele-release-push "${ELE_VERSION_FULL}" opencast-userdirectory-moodle/target/opencast-userdirectory-moodle-*.jar
+    - cp opencast-userdirectory-moodle/target/opencast-userdirectory-moodle-*.jar .
+    - ele-release-push latest opencast-userdirectory-moodle-*.jar
+    - ele-release-push "${ELE_VERSION}" opencast-userdirectory-moodle-*.jar
+    - ele-release-push "${ELE_VERSION_FULL}" opencast-userdirectory-moodle-*.jar
 
 trigger-master:
   stage: trigger
