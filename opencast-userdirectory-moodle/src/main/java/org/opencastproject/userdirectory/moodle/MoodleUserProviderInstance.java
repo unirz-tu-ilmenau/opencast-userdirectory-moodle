@@ -466,7 +466,7 @@ public class MoodleUserProviderInstance implements UserProvider, RoleProvider, C
             courseId + "_" + LTI_LEARNER_ROLE,
             jaxbOrganization,
             "Moodle external role",
-            Role.Type.EXTERNAL_GROUP
+            Role.Type.EXTERNAL
         ));
 
         // TODO: check if user is instructor (instructorRoles)      -> courseId + "_" + LTI_INSTRUCTOR_ROLE
