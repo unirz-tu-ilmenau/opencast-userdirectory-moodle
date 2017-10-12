@@ -4,7 +4,7 @@
 
   <groupId>de.uni_muenster.electures</groupId>
   <artifactId>opencast-userdirectory-moodle-base</artifactId>
-  <version>3.3_wwu.2</version>
+  <version>3.3_wwu.x</version>
   <packaging>pom</packaging>
 
   <name>opencast-userdirectory-moodle-base</name>

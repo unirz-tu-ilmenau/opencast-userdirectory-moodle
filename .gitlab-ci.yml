@@ -14,7 +14,7 @@
 ---
 variables:
   ELE_VERSION:      "3.3"
-  ELE_VERSION_FULL: "3.3_wwu.2"
+  ELE_VERSION_FULL: "3.3_wwu.x"
 
 stages:
   - info
