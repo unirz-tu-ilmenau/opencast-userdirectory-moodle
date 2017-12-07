@@ -13,8 +13,8 @@
 # limitations under the License.
 ---
 variables:
-  ELE_VERSION:      "3.3"
-  ELE_VERSION_FULL: "3.3_wwu.x"
+  ELE_VERSION:      "3.4"
+  ELE_VERSION_FULL: "3.4_wwu.x"
 
 stages:
   - info

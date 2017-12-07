@@ -4,7 +4,7 @@
 
   <groupId>de.uni_muenster.electures</groupId>
   <artifactId>opencast-userdirectory-moodle-base</artifactId>
-  <version>3.3_wwu.x</version>
+  <version>3.4_wwu.x</version>
   <packaging>pom</packaging>
 
   <name>opencast-userdirectory-moodle-base</name>
@@ -28,7 +28,7 @@
     <commons-collection.version>3.2.2</commons-collection.version>
     <httpcomponents-httpclient.version>4.5</httpcomponents-httpclient.version>
     <opencast.nexus.url>http://nexus.opencast.org</opencast.nexus.url>
-    <opencast.version>[3.3,)</opencast.version>
+    <opencast.version>[3.4,)</opencast.version>
   </properties>
 
   <build>
