@@ -68,5 +68,15 @@ trigger-master:
     - master
   script:
     - ele-trigger-build electures/opencast/opencast-docker
-        OC_RELEASE=wwu/master
-        AVA_RELEASE=master
+        "ref=master"
+        "OC_USERDIRECTORY_MOODLE_RELEASE=master"
+
+trigger-release:
+  stage: trigger
+  when: manual
+  only:
+    - tags
+  script:
+    - ele-trigger-build electures/opencast/opencast-docker
+        "ref=${ELE_VERSION_FULL}"
+        "OC_USERDIRECTORY_MOODLE_RELEASE=${ELE_VERSION_FULL}"
