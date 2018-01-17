@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.uni_muenster.electures</groupId>
     <artifactId>opencast-userdirectory-moodle-base</artifactId>
-    <version>3.4_wwu.x</version>
+    <version>4.0_wwu.x</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <properties>
